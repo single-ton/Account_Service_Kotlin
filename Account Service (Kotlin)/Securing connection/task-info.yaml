@@ -1,0 +1,232 @@
+type: edu
+files:
+- name: src/resources/application.properties
+  visible: true
+  text: |-
+    server.port=28852
+    management.endpoints.web.exposure.include=*
+    management.endpoint.shutdown.enabled=true
+    spring.datasource.url=jdbc:h2:file:../service_db
+    server.error.include-message=always
+  learner_created: false
+- name: build.gradle
+  visible: true
+  text: |-
+    buildscript {
+        repositories {
+            mavenCentral()
+        }
+        dependencies {
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$hs.kotlin.version"
+            classpath "org.springframework.boot:spring-boot-gradle-plugin:$hs.spring.bootVersion"
+            classpath "io.spring.gradle:dependency-management-plugin:$hs.spring.dependencyManagementVersion"
+        }
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'kotlin'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    repositories {
+        mavenCentral()
+    }
+
+    sourceSets.main.resources.srcDirs = ["src/resources"]
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'com.h2database:h2'
+        implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.1.0.Final'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'javax.xml.bind:jaxb-api:2.2.4'
+    }
+  learner_created: false
+- name: src/account/auth/AuthApi.kt
+  visible: true
+  text: |-
+    package account.auth
+
+    import org.springframework.expression.common.ExpressionUtils.toLong
+    import org.springframework.http.HttpStatus
+    import org.springframework.web.bind.annotation.*
+    import org.springframework.web.server.ResponseStatusException
+
+
+    data class SignupData(
+        val name:String,
+        val lastname:String,
+        val email:String,
+        val password:String
+    )
+    data class ResponseData(
+        val id:Long,
+        val name:String,
+        val lastname:String,
+        val email:String,
+    )
+    @RestController
+    @RequestMapping("api/auth")
+    class Auth {
+        var users: ArrayList<ResponseData> = ArrayList<ResponseData>()
+
+        @PostMapping("/signup")
+        fun Signup(@RequestBody signupData: SignupData):ResponseData{
+            if(users.size!=0){
+                if(users[0].email==signupData.email)
+                    throw ResponseStatusException(HttpStatus.BAD_REQUEST, "User exist!")
+            }
+            if(signupData.email.contains("@acme.com") &&
+                signupData.name != "" &&
+                signupData.lastname != ""&&
+                signupData.password != ""
+            ) {
+                var responseData = ResponseData(users.size.toLong(), signupData.name, signupData.lastname, signupData.email)
+                users.add(responseData)
+                return responseData
+            }
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Cause description here")
+        }
+    }
+  learner_created: false
+- name: src/account/AccountServiceApplication.kt
+  visible: true
+  text: |-
+    package account
+
+    import org.springframework.boot.autoconfigure.SpringBootApplication
+    import org.springframework.boot.runApplication
+    import org.springframework.context.annotation.Bean
+    import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+    import org.springframework.security.crypto.password.PasswordEncoder
+
+
+    @SpringBootApplication
+    open class AccountServiceApplication
+
+    fun main(args: Array<String>) {
+        runApplication<AccountServiceApplication>(*args)
+    }
+  learner_created: false
+- name: src/account/security/SecurityConfiguration.kt
+  visible: true
+  text: |-
+    package account.security
+
+    import org.springframework.context.annotation.Configuration
+    import org.springframework.security.config.annotation.web.builders.HttpSecurity
+    import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+    import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+
+
+    @Configuration
+    @EnableWebSecurity
+    open class SecurityConfig : WebSecurityConfigurerAdapter() {
+        @Throws(Exception::class)
+        override fun configure(http: HttpSecurity) {
+            http
+                .csrf().disable()
+                .authorizeRequests()
+                .anyRequest().permitAll()
+
+        }
+
+    }
+  learner_created: false
+- name: test/AccountServiceTest.java
+  visible: false
+  text: |
+    import account.AccountServiceApplicationKt;
+    import org.hyperskill.hstest.dynamic.DynamicTest;
+    import org.hyperskill.hstest.dynamic.input.DynamicTesting;
+    import org.hyperskill.hstest.exception.outcomes.WrongAnswer;
+    import org.hyperskill.hstest.mocks.web.request.HttpRequest;
+    import org.hyperskill.hstest.stage.SpringTest;
+    import org.hyperskill.hstest.testcase.CheckResult;
+
+    import javax.net.ssl.*;
+    import java.security.cert.X509Certificate;
+
+    public class AccountServiceTest extends SpringTest {
+      public AccountServiceTest() {
+        super(AccountServiceApplicationKt.class, "../service_db.mv.db");
+      }
+
+      SSLSocket socket;
+      java.security.cert.X509Certificate[] chain;
+
+      // Warning!!! Only for testing reason, trust all certificates!
+      TrustManager[] trustAllCerts = new TrustManager[] {
+              new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                  return new java.security.cert.X509Certificate[0];
+                }
+                public void checkClientTrusted(
+                        java.security.cert.X509Certificate[] certs, String authType) {
+                }
+                public void checkServerTrusted(
+                        java.security.cert.X509Certificate[] certs, String authType) {
+                }
+              }
+      };
+
+      // Test SSL
+      public CheckResult checkCertificateName(String nameCN) {
+        try {
+          SSLContext sc = SSLContext.getInstance("SSL");
+          //ТАК нельзя!!! доверяем всем сертификатам, только для тестирования и разработки!!!
+          sc.init(null, trustAllCerts, new java.security.SecureRandom());
+          SSLSocketFactory factory = sc.getSocketFactory();
+          HttpRequest request = get("");
+          socket = (SSLSocket) factory.createSocket(request.getHost(), request.getPort());
+          getCertificates();
+          if (findCert(nameCN)) {
+            return CheckResult.correct();
+          } else {
+            throw new WrongAnswer("Not found certificate with CN - " + nameCN);
+          }
+        } catch (Exception e) {
+          e.printStackTrace();
+          System.out.println("Connection not found");
+          throw new WrongAnswer("Can't establish https connection!");
+        }
+      }
+
+      // Get certificate chain
+      public void getCertificates() {
+        try {
+          chain = (X509Certificate[]) socket.getSession().getPeerCertificates();
+        } catch (SSLPeerUnverifiedException e) {
+          e.printStackTrace();
+          System.out.println(e.toString());
+        }
+      }
+
+
+      // Searching certificate by Common Name
+      public boolean findCert(String subject) {
+        for (java.security.cert.X509Certificate c : chain) {
+          String subjectName = c.getSubjectDN().getName();
+          System.out.println(subjectName + " " + c.getSigAlgName());
+          if (subjectName.contains("CN=" + subject)) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      @DynamicTest
+      DynamicTesting[] dt = new DynamicTesting[]{
+
+              // Check certificate name
+              () -> checkCertificateName("accountant_service"),
+      };
+    }
+  learner_created: false
+feedback_link: https://hyperskill.org/projects/332/stages/1867/implement#comment
+status: Unchecked
+record: -1

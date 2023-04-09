@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.hyperskill:hs-test:v10.0.3" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.github.hyperskill" artifactId="hs-test" version="v10.0.3" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.hyperskill/hs-test/v10.0.3/694cf22aab344442a31f73dcda8f0fbaaa8b8315/hs-test-v10.0.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.hyperskill/hs-test/v10.0.3/6e1ceda8cb72340d41fc1f3d88cb4edc3c0b0077/hs-test-v10.0.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

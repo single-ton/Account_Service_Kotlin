@@ -1,0 +1,6 @@
+# Project exclude paths
+/.gradle/
+/Account Service (Kotlin)/task/build/
+/Account Service (Kotlin)/task/out/
+/Account Service (Kotlin)/task/out/production/classes/
+/Account Service (Kotlin)/task/out/test/classes/

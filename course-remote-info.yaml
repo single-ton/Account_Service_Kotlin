@@ -1,0 +1,358 @@
+hyperskill_project:
+  id: 332
+  ide_files: https://stepik.org/media/attachments/lesson/934803/additional_files.json
+  is_template_based: false
+  use_ide: true
+update_date: "Sun, 09 Apr 2023 14:30:11 UTC"
+stages:
+- id: 1861
+  step: 27096
+  is_completed: true
+- id: 1862
+  step: 27097
+  is_completed: true
+- id: 1863
+  step: 27098
+  is_completed: true
+- id: 1864
+  step: 27099
+  is_completed: false
+- id: 1865
+  step: 27100
+  is_completed: false
+- id: 1866
+  step: 27101
+  is_completed: false
+- id: 1867
+  step: 27102
+  is_completed: false
+topics:
+  0:
+  - title: "Write, compile, and run"
+    theory_id: 3739
+  - title: Introduction to Operating systems
+    theory_id: 9704
+  - title: Computer algorithms
+    theory_id: 16547
+  - title: World Wide Web
+    theory_id: 6633
+  - title: Computer programming
+    theory_id: 8739
+  - title: Introduction to Kotlin
+    theory_id: 4350
+  - title: External resources
+    theory_id: 6216
+  - title: YAML
+    theory_id: 12722
+  - title: Introduction to software architecture
+    theory_id: 15368
+  - title: Design principles
+    theory_id: 8956
+  1:
+  - title: "JVM, JRE, and JDK"
+    theory_id: 3499
+  - title: Command line overview
+    theory_id: 8977
+  - title: Parameters and Options
+    theory_id: 9746
+  - title: HyperText Transfer Protocol
+    theory_id: 6569
+  - title: Introduction to Spring Boot
+    theory_id: 7944
+  - title: Getting started with Spring Boot
+    theory_id: 6336
+  - title: HTTP URL
+    theory_id: 6740
+  - title: Basic project structure
+    theory_id: 6339
+  - title: IoC Container
+    theory_id: 16851
+  - title: Spring beans
+    theory_id: 14641
+  - title: Spring components
+    theory_id: 14652
+  - title: '@Bean vs @Component'
+    theory_id: 14771
+  - title: H2 database
+    theory_id: 8762
+  - title: HTTP messages
+    theory_id: 6752
+  - title: REST
+    theory_id: 7834
+  - title: Introduction to Spring Web MVC
+    theory_id: 13611
+  - title: Introduction to Spring Data
+    theory_id: 16299
+  - title: CRUD repositories
+    theory_id: 18031
+  - title: Postman
+    theory_id: 8512
+  - title: Insecure Cryptographic Storage
+    theory_id: 20069
+  - title: Spring Security Crypto
+    theory_id: 21866
+  - title: Getting data from REST
+    theory_id: 13287
+  - title: Posting and deleting data via REST
+    theory_id: 13292
+  - title: Exception handling
+    theory_id: 8780
+  - title: Advanced exception handling in Spring Boot
+    theory_id: 19855
+  - title: "Web security, OWASP"
+    theory_id: 14755
+  - title: HTTP Basic Auth
+    theory_id: 7778
+  - title: Getting started with Spring Security
+    theory_id: 13856
+  - title: Authentication
+    theory_id: 14353
+  - title: Authorization
+    theory_id: 15269
+  - title: Custom User Store
+    theory_id: 16191
+  - title: Getting authenticated user details
+    theory_id: 16710
+  - title: Paradigms
+    theory_id: 15860
+  - title: Introduction to OOP
+    theory_id: 3614
+  - title: Build tools
+    theory_id: 4284
+  - title: Java Archive
+    theory_id: 4311
+  - title: Gradle basics
+    theory_id: 5075
+  - title: Basic project with Gradle
+    theory_id: 5077
+  - title: Building apps using Gradle
+    theory_id: 7917
+  - title: Dependency management
+    theory_id: 5076
+  - title: Web development
+    theory_id: 13931
+  - title: Libraries
+    theory_id: 8504
+  - title: Frameworks
+    theory_id: 6701
+  - title: What is a bug
+    theory_id: 5504
+  - title: Functional testing
+    theory_id: 13438
+  - title: Unit testing
+    theory_id: 7545
+  - title: Dependency injection
+    theory_id: 20580
+  - title: HTML basics
+    theory_id: 6434
+  - title: Tags and Attributes
+    theory_id: 7536
+  - title: HTML page structure
+    theory_id: 6491
+  - title: Introduction to databases
+    theory_id: 8497
+  - title: Interfaces
+    theory_id: 9640
+  - title: XML
+    theory_id: 6901
+  - title: JSON
+    theory_id: 6854
+  - title: Data and object mapping
+    theory_id: 8262
+  - title: Authentication and Authorization
+    theory_id: 14219
+  - title: MVC
+    theory_id: 17197
+  - title: "Hashing: overview"
+    theory_id: 9831
+  - title: Hash function
+    theory_id: 10878
+  3:
+  - title: Binary numbers
+    theory_id: 5544
+  - title: Hexadecimal numbers
+    theory_id: 8788
+  - title: Units of information
+    theory_id: 6865
+  - title: Using Spring MVC
+    theory_id: 14409
+  - title: Transaction management
+    theory_id: 18039
+  - title: Handling requests with bodies
+    theory_id: 13334
+  - title: POST vs. PUT requests
+    theory_id: 27497
+  - title: Basic literals
+    theory_id: 4351
+  - title: Overview of the basic program
+    theory_id: 4362
+  - title: Values and variables
+    theory_id: 4371
+  - title: Val variables
+    theory_id: 17408
+  - title: Data types
+    theory_id: 4388
+  - title: Comments
+    theory_id: 4406
+  - title: Coding style conventions
+    theory_id: 4419
+  - title: Naming variables
+    theory_id: 4389
+  - title: The classification of basic types
+    theory_id: 4455
+  - title: Type conversion
+    theory_id: 4672
+  - title: Standard output
+    theory_id: 4425
+  - title: Invoking functions
+    theory_id: 4575
+  - title: Standard input with Java Scanner
+    theory_id: 4445
+  - title: Reading data with a readln
+    theory_id: 11224
+  - title: String basics
+    theory_id: 12553
+  - title: String templates
+    theory_id: 4547
+  - title: Boolean and logical operations
+    theory_id: 4515
+  - title: Arithmetic operations
+    theory_id: 4472
+  - title: Type of the numeric expression
+    theory_id: 9506
+  - title: Increment and decrement
+    theory_id: 10776
+  - title: Integers in action
+    theory_id: 4488
+  - title: Relational operators
+    theory_id: 4525
+  - title: Declaring functions
+    theory_id: 4580
+  - title: If expression
+    theory_id: 4625
+  - title: Errors in programs
+    theory_id: 11559
+  - title: Nullable and non-nullable types
+    theory_id: 7613
+  - title: Type system
+    theory_id: 9689
+  - title: Repeating blocks
+    theory_id: 4643
+  - title: Objects
+    theory_id: 11233
+  - title: Declaring classes
+    theory_id: 6200
+  - title: Equality
+    theory_id: 11236
+  - title: Unicode
+    theory_id: 7899
+  - title: Characters
+    theory_id: 4680
+  - title: Ranges
+    theory_id: 4633
+  - title: When expression
+    theory_id: 4631
+  - title: Functional decomposition
+    theory_id: 12668
+  - title: Default arguments
+    theory_id: 4637
+  - title: Named arguments
+    theory_id: 4640
+  - title: Constructors
+    theory_id: 10740
+  - title: Member functions
+    theory_id: 6364
+  - title: Introduction to MutableList
+    theory_id: 14879
+  - title: For loop and ranges
+    theory_id: 4652
+  - title: Work with MutableLists
+    theory_id: 14902
+  - title: For loop and lists
+    theory_id: 15022
+  - title: Introduction to collections
+    theory_id: 10390
+  - title: List
+    theory_id: 10730
+  - title: Mutable List
+    theory_id: 11032
+  - title: What is SQL
+    theory_id: 7054
+  - title: Basic data types
+    theory_id: 7123
+  - title: Literals
+    theory_id: 7400
+  - title: Arithmetic expressions
+    theory_id: 7409
+  - title: Basic CREATE statement
+    theory_id: 9084
+  - title: Basic SELECT statement
+    theory_id: 7392
+  - title: SELECT FROM statement
+    theory_id: 8611
+  - title: Logic and comparison expressions
+    theory_id: 8619
+  - title: The NULL value
+    theory_id: 7907
+  - title: Special WHERE operators
+    theory_id: 10521
+  - title: Intro to MySQL
+    theory_id: 16662
+  - title: Basic INSERT statement
+    theory_id: 9059
+  - title: Basic DELETE statement
+    theory_id: 9075
+  - title: Encapsulation
+    theory_id: 8519
+  - title: Property accessors
+    theory_id: 10511
+  - title: Introduction to generic programming
+    theory_id: 14698
+  - title: Generic functions
+    theory_id: 16052
+  - title: Generics and Any
+    theory_id: 15344
+  - title: Basic UPDATE statement
+    theory_id: 9067
+  - title: Introduction to transactions
+    theory_id: 12144
+  - title: Understanding Transactions
+    theory_id: 12357
+  - title: What is an exception
+    theory_id: 7243
+  - title: Hierarchy of exceptions
+    theory_id: 13264
+  - title: Taming exceptions
+    theory_id: 7601
+  - title: Null safety
+    theory_id: 7619
+  - title: Alter table
+    theory_id: 9579
+  - title: PRIMARY KEY constraint
+    theory_id: 9781
+  - title: Consistency constraints
+    theory_id: 9587
+  4:
+  - title: Relational Data Model
+    theory_id: 13785
+  - title: Object-Relational Mapping (ORM)
+    theory_id: 8312
+  - title: Introduction to JPA
+    theory_id: 17125
+  - title: Entities
+    theory_id: 18135
+  - title: JPA relationships
+    theory_id: 17787
+  - title: Cascade operations
+    theory_id: 27502
+  - title: Many-to-many relationships
+    theory_id: 19541
+  5:
+  - title: ApplicationContext
+    theory_id: 22062
+  - title: Scopes of beans
+    theory_id: 19487
+  - title: Bean lifecycle
+    theory_id: 19550
+  - title: Logging in Spring Boot
+    theory_id: 27485
