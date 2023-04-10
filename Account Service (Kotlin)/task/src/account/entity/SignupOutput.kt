@@ -5,4 +5,5 @@ data class SignupOutput (
     val name:String,
     val lastname:String,
     val email:String,
+    val roles:Array<String>,
 )

@@ -725,7 +725,7 @@ files:
 - name: src/account/entity/ChangedPassOutput.kt
   visible: true
   learner_created: true
-feedback_link: https://hyperskill.org/projects/332/stages/1863/implement#comment
+feedback_link: https://hyperskill.org/learn/step/27098#comment
 status: Solved
 feedback:
   message: Congratulations!

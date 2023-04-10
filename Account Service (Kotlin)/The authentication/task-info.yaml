@@ -444,7 +444,7 @@ files:
 - name: src/account/entity/SignupOutput.kt
   visible: true
   learner_created: true
-feedback_link: https://hyperskill.org/projects/332/stages/1862/implement#comment
+feedback_link: https://hyperskill.org/learn/step/27097#comment
 status: Solved
 feedback:
   message: Congratulations!

@@ -1,14 +1,5 @@
 type: edu
 files:
-- name: src/resources/application.properties
-  visible: true
-  text: |-
-    server.port=28852
-    management.endpoints.web.exposure.include=*
-    management.endpoint.shutdown.enabled=true
-    spring.datasource.url=jdbc:h2:file:../service_db
-    server.error.include-message=always
-  learner_created: false
 - name: build.gradle
   visible: true
   text: |-
@@ -44,53 +35,6 @@ files:
         implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.1.0.Final'
         implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation 'javax.xml.bind:jaxb-api:2.2.4'
-    }
-  learner_created: false
-- name: src/account/auth/AuthApi.kt
-  visible: true
-  text: |-
-    package account.auth
-
-    import org.springframework.expression.common.ExpressionUtils.toLong
-    import org.springframework.http.HttpStatus
-    import org.springframework.web.bind.annotation.*
-    import org.springframework.web.server.ResponseStatusException
-
-
-    data class SignupData(
-        val name:String,
-        val lastname:String,
-        val email:String,
-        val password:String
-    )
-    data class ResponseData(
-        val id:Long,
-        val name:String,
-        val lastname:String,
-        val email:String,
-    )
-    @RestController
-    @RequestMapping("api/auth")
-    class Auth {
-        var users: ArrayList<ResponseData> = ArrayList<ResponseData>()
-
-        @PostMapping("/signup")
-        fun Signup(@RequestBody signupData: SignupData):ResponseData{
-            if(users.size!=0){
-                if(users[0].email==signupData.email)
-                    throw ResponseStatusException(HttpStatus.BAD_REQUEST, "User exist!")
-            }
-            if(signupData.email.contains("@acme.com") &&
-                signupData.name != "" &&
-                signupData.lastname != ""&&
-                signupData.password != ""
-            ) {
-                var responseData = ResponseData(users.size.toLong(), signupData.name, signupData.lastname, signupData.email)
-                users.add(responseData)
-                return responseData
-            }
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Cause description here")
-        }
     }
   learner_created: false
 - name: src/account/AccountServiceApplication.kt
@@ -1020,6 +964,435 @@ files:
 
     }
   learner_created: false
-feedback_link: https://hyperskill.org/projects/332/stages/1865/implement#comment
-status: Unchecked
+- name: src/account/controllers/AuthController.kt
+  visible: true
+  text: |-
+    package account.controllers
+
+    import account.entity.*
+    import account.services.EmployeeService
+    import org.springframework.beans.factory.annotation.Autowired
+    import org.springframework.http.HttpHeaders
+    import org.springframework.http.HttpStatus
+    import org.springframework.web.bind.annotation.*
+    import org.springframework.web.server.ResponseStatusException
+    import java.util.*
+
+
+    @RestController
+    @RequestMapping("api/auth")
+    class AuthController {
+        @Autowired
+        lateinit var employeeService: EmployeeService
+        var breachedPasswods = arrayOf(
+            "PasswordForJanuary", "PasswordForFebruary", "PasswordForMarch", "PasswordForApril",
+            "PasswordForMay", "PasswordForJune", "PasswordForJuly", "PasswordForAugust",
+            "PasswordForSeptember", "PasswordForOctober", "PasswordForNovember", "PasswordForDecember"
+        )
+
+        @PostMapping("/signup")
+        fun Signup(@RequestBody signupData: SignupData): SignupOutput {
+            val users = employeeService.findUsers()
+
+            if(users.find{ user -> user.email.lowercase()==signupData.email.lowercase()}!=null){
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST, "User exist!")
+            }
+            if(signupData.email.contains("@acme.com") &&
+                signupData.name != "" &&
+                signupData.lastname != ""&&
+                signupData.password != ""&&
+
+                !breachedPasswods.contains(signupData.password)&&
+                signupData.password.length>=12
+            ) {
+                val responseData = User(0, signupData.name, signupData.lastname, signupData.email, signupData.password)
+                employeeService.save(responseData)
+                val user = employeeService.getUser(responseData.email)
+                return SignupOutput(user!!.id, responseData.firstName, responseData.lastName,responseData.email)
+            }
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "The password is in the hacker's database!")
+        }
+        @PostMapping("/changepass")
+        fun ChangePass(@RequestHeader headers: HttpHeaders,
+                       @RequestBody changePassData: ChangePassData?):ChangedPassOutput{
+            if(headers["authorization"]==null)
+                throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
+            val loginPass = Base64.getDecoder().decode(headers["authorization"]?.get(0)!!.split(" ")[1])
+                .toString(charset("utf-8")).split(":")
+            val user = employeeService.getUser(loginPass[0])
+            if(user==null)
+                throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
+            if(user.passWord!=loginPass[1])
+                throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
+
+            if(changePassData!!.new_password.length<12){
+                throw throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Password length must be 12 chars minimum!")
+            }
+            if(changePassData.new_password==loginPass[1]
+                )
+                throw throw ResponseStatusException(HttpStatus.BAD_REQUEST, "The passwords must be different!")
+            if(breachedPasswods.contains(changePassData.new_password))
+                throw throw ResponseStatusException(HttpStatus.BAD_REQUEST, "The password is in the hacker's database!")
+            employeeService.changePass(user, changePassData.new_password)
+            return ChangedPassOutput(user.email.lowercase())
+        }
+    }
+  learner_created: true
+- name: src/account/entity/User.kt
+  visible: true
+  text: |-
+    package account.entity
+
+    import java.util.*
+    import javax.persistence.*
+
+
+    open class User(var id: Long=0,
+                    open var firstName: String = "",
+                    open var lastName: String = "",
+                    open var email: String = "",
+                    open var passWord: String = "") {
+
+
+    }
+  learner_created: true
+- name: src/account/entity/SignupOutput.kt
+  visible: true
+  text: |
+    package account.entity
+
+    data class SignupOutput (
+        val id: Long,
+        val name:String,
+        val lastname:String,
+        val email:String,
+    )
+  learner_created: true
+- name: src/account/entity/SignupData.kt
+  visible: true
+  text: |-
+    package account.entity
+
+    data class SignupData(
+        val name:String,
+        val lastname:String,
+        val email:String,
+        val password:String
+    )
+  learner_created: true
+- name: src/account/entity/ChangePassData.kt
+  visible: true
+  text: |-
+    package account.entity
+
+    import com.fasterxml.jackson.annotation.JsonCreator
+    import com.fasterxml.jackson.annotation.JsonProperty
+
+    data class ChangePassData @JsonCreator public constructor(@JsonProperty("new_password") var new_password: String) {
+
+    }
+  learner_created: true
+- name: src/account/entity/Payment.kt
+  visible: true
+  text: |-
+    package account.entity
+
+    data class Payment (
+        val employee:String,
+        val period:String,
+        val salary:Long
+    )
+  learner_created: true
+- name: src/account/services/EmployeeService.kt
+  visible: true
+  text: |-
+    package account.services
+
+    import account.entity.Payment
+    import account.entity.User
+    import org.springframework.jdbc.core.JdbcTemplate
+    import org.springframework.stereotype.Service
+    import org.springframework.transaction.TransactionStatus
+    import org.springframework.transaction.support.TransactionTemplate
+
+    @Service
+    class EmployeeService(val db: JdbcTemplate, val transactionTemplate: TransactionTemplate) {
+        fun findUsers():List<User> = db.query("select * from users"){ response, _ ->
+            User(
+                response.getLong("id"),
+                response.getString("name"),
+                response.getString("lastname"),
+                response.getString("email"))
+        }
+        fun save(user: User){
+            db.update("insert into users (name, lastname, email, password) values ( ?, ?, ?, ? )",
+                 user.firstName, user.lastName, user.email, user.passWord)
+        }
+        fun getUser(email:String):User?{
+            val users = db.query(String.format("select * from users where LOWER(email)=LOWER('%s')", email)){ response, _ ->
+                account.entity.User(
+                    response.getLong("id"),
+                    response.getString("name"),
+                    response.getString("lastname"),
+                    response.getString("email"),
+                    response.getString("password")
+                )
+            }
+            return if(users.size>0)
+                users[0]
+            else
+                null
+        }
+        fun changePass(user:User, password:String){
+            db.update(String.format("update users set password='%s' where id=%d", password, user.id))
+        }
+        fun addPayments(payments:List<Payment>){
+            transactionTemplate.execute {
+                for(p in payments) {
+                    db.update(String.format("insert into payments values('%s','%s','%s')", p.employee, p.period, p.salary))
+                }
+            }
+        }
+        fun getPayments(email:String):List<Payment>{
+            val payments = db.query(String.format("select * from payments where LOWER(employee)=LOWER('%s') order by period DESC", email)) { response, _ ->
+                Payment(
+                    response.getString("employee"),
+                    response.getString("period"),
+                    response.getLong("salary")
+                )
+            }
+            return payments
+        }
+        fun getPayment(email:String, period:String):Payment?{
+            val payments = db.query(String.format("select * from payments where LOWER(employee)=LOWER('%s') and period='%s' order by period DESC", email, period)) { response, _ ->
+                Payment(
+                    response.getString("employee"),
+                    response.getString("period"),
+                    response.getLong("salary")
+                )
+            }
+            if(payments.size==0)
+                return null
+            return payments[0]
+        }
+        fun updatePayments(payment:Payment){
+            db.update(String.format("update payments set salary=%d where employee='%s' and period='%s'", payment.salary, payment.employee, payment.period))
+
+        }
+
+
+    }
+  learner_created: true
+- name: src/account/entity/ChangedPassOutput.kt
+  visible: true
+  text: |-
+    package account.entity
+
+    data class ChangedPassOutput (
+        val email:String,
+        val status:String="The password has been updated successfully"
+    )
+  learner_created: true
+- name: src/account/controllers/AcctController.kt
+  visible: true
+  text: |-
+    package account.controllers
+
+    import account.entity.*
+    import account.services.EmployeeService
+    import org.springframework.beans.factory.annotation.Autowired
+    import org.springframework.http.HttpHeaders
+    import org.springframework.http.HttpStatus
+    import org.springframework.web.bind.annotation.*
+    import org.springframework.web.server.ResponseStatusException
+    import java.util.*
+
+    @RestController
+    @RequestMapping("api/acct")
+    class AcctController {
+        @Autowired
+        lateinit var employeeService: EmployeeService
+        fun monthConvert(month:String):String{
+            if(month=="01")
+                return "January"
+            if(month=="02")
+                return "February"
+            if(month=="03")
+                return "March"
+            if(month.toInt()>12||month.toInt()<1)
+                throw Exception("month out of rahge")
+            return "other"
+        }
+        @PostMapping("/payments")
+        fun PostPayments(@RequestBody payments: List<Payment>): StatusOutput {
+            try {
+                for(p in payments){
+                    monthConvert(p.period.split("-")[0])
+                }
+                employeeService.addPayments(payments)
+            }catch(e:Exception){
+                throw throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Some exception")
+            }
+            return StatusOutput()
+        }
+        @PutMapping("/payments")
+        fun PutPayments(@RequestBody payment: Payment): StatusOutput {
+            try {
+                monthConvert(payment.period.split("-")[0])
+                employeeService.updatePayments(payment)
+            }catch(e:Exception){
+                throw throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Some exception")
+            }
+            return StatusOutput("Updated successfully!")
+        }
+
+        @GetMapping("/payments")
+        fun GetPayments(@RequestHeader headers: HttpHeaders,
+                        @RequestParam period:String): Payment {
+            if(headers["authorization"]==null)
+                throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
+            val loginPass = Base64.getDecoder().decode(headers["authorization"]?.get(0)!!.split(" ")[1])
+                .toString(charset("utf-8")).split(":")
+            val user = employeeService.getUser(loginPass[0])
+            if(user==null)
+                throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
+            if(user.passWord!=loginPass[1])
+                throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
+
+            try {
+                monthConvert(period)
+                val payment = employeeService.getPayment(user.email,period)
+                return payment!!
+            }catch(e:Exception){
+                throw throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Some exception")
+            }
+        }
+    }
+  learner_created: true
+- name: src/account/entity/StatusOutput.kt
+  visible: true
+  text: |-
+    package account.entity
+
+    data class StatusOutput (
+        val status:String= "Added successfully!"
+    )
+  learner_created: true
+- name: src/account/entity/PaymentOutput.kt
+  visible: true
+  text: |-
+    package account.entity
+
+    data class PaymentOutput(
+        val name:String,
+        val lastname:String,
+        val period:String,
+        val salary:String
+    )
+  learner_created: true
+- name: src/account/controllers/EmployeeController.kt
+  visible: true
+  text: |-
+    package account.controllers
+
+    import account.entity.PaymentOutput
+    import account.entity.SignupOutput
+    import account.services.EmployeeService
+    import org.springframework.beans.factory.annotation.Autowired
+    import org.springframework.http.HttpHeaders
+    import org.springframework.http.HttpStatus
+    import org.springframework.web.bind.annotation.*
+    import org.springframework.web.server.ResponseStatusException
+    import java.util.*
+
+    @RestController
+    @RequestMapping("api/empl")
+    class EmployeeController {
+        @Autowired
+        lateinit var employeeService: EmployeeService
+
+        fun monthConverter(month:String):String{
+            if(month=="01")
+                return "January"
+            if(month=="02")
+                return "February"
+            if(month=="03")
+                return "March"
+            if(month.toInt()>12||month.toInt()<1)
+                throw Exception("month out of rahge")
+            return "other"
+        }
+        fun monthConvert(month:String):String{
+            if(month=="01")
+                return "January"
+            if(month=="02")
+                return "February"
+            if(month=="03")
+                return "March"
+            if(month.toInt()>12||month.toInt()<1)
+                throw Exception("month out of rahge")
+            return "other"
+        }
+        @GetMapping("/payment")
+        fun getPayment(@RequestHeader headers: HttpHeaders,
+                       @RequestParam( value = "period", required = false) period:String?):Any{
+            if(headers["authorization"]==null)
+                throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
+            val loginPass = Base64.getDecoder().decode(headers["authorization"]?.get(0)!!.split(" ")[1])
+                .toString(charset("utf-8")).split(":")
+            val user = employeeService.getUser(loginPass[0])
+            if(user==null)
+                throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
+            if(user.passWord!=loginPass[1])
+                throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
+
+            var payments = employeeService.getPayments(loginPass[0])
+            val paymentsOutput=ArrayList<PaymentOutput>()
+            if(period!=null){
+                try{
+                    monthConvert(period.split("-")[0])
+                    for(p in payments){
+                        if(p.period==period) {
+                            payments = listOf(p)
+                            break
+                        }
+                    }
+                }catch (e:Exception){
+                    throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Month out of range")
+                }
+            }
+            for(p in payments){
+                paymentsOutput.add(
+                    PaymentOutput(
+                        user.firstName,
+                        user.lastName,
+                        String.format("%s-%s",monthConverter(p.period.split("-")[0]), p.period.split("-")[1]),
+                        String.format("%d dollar(s) %d cent(s)",(p.salary/100).toInt(),p.salary%100)
+                    ))
+            }
+            if(period!=null)
+                return paymentsOutput[0]
+            return paymentsOutput
+        }
+
+    }
+  learner_created: true
+- name: src/account/entity/Role.kt
+  visible: true
+  learner_created: true
+- name: src/account/controllers/AminController.kt
+  visible: true
+  learner_created: true
+- name: src/account/entity/ChangeRoleInfo.kt
+  visible: true
+  learner_created: true
+- name: src/account/entity/UserStatusOutput.kt
+  visible: true
+  learner_created: true
+feedback_link: https://hyperskill.org/learn/step/27100#comment
+status: Failed
+feedback:
+  message: "Wrong answer in test #36\n\nWrong object in response, expected array of\
+    \ JSON but was \nclass java.lang.String"
+  time: "Mon, 10 Apr 2023 00:26:07 UTC"
 record: -1

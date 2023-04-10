@@ -289,6 +289,6 @@ files:
         implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.1.0.Final'
     }
   learner_created: false
-feedback_link: https://hyperskill.org/projects/332/stages/1861/implement#comment
+feedback_link: https://hyperskill.org/learn/step/27096#comment
 status: Solved
 record: 1

@@ -1,8 +1,8 @@
 package account.entity
 
-data class SignupData(
+data class PaymentOutput(
     val name:String,
     val lastname:String,
-    val email:String,
-    val password:String,
+    val period:String,
+    val salary:String
 )

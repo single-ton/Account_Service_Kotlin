@@ -3,7 +3,7 @@ hyperskill_project:
   ide_files: https://stepik.org/media/attachments/lesson/934803/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: "Sun, 09 Apr 2023 14:30:11 UTC"
+update_date: "Mon, 10 Apr 2023 00:30:18 UTC"
 stages:
 - id: 1861
   step: 27096
@@ -16,7 +16,7 @@ stages:
   is_completed: true
 - id: 1864
   step: 27099
-  is_completed: false
+  is_completed: true
 - id: 1865
   step: 27100
   is_completed: false
@@ -32,10 +32,10 @@ topics:
     theory_id: 3739
   - title: Introduction to Operating systems
     theory_id: 9704
-  - title: Computer algorithms
-    theory_id: 16547
   - title: World Wide Web
     theory_id: 6633
+  - title: Computer algorithms
+    theory_id: 16547
   - title: Computer programming
     theory_id: 8739
   - title: Introduction to Kotlin

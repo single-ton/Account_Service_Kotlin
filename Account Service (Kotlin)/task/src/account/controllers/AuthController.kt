@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
+import java.sql.Array
 import java.util.*
 
 
@@ -39,7 +40,15 @@ class AuthController {
             val responseData = User(0, signupData.name, signupData.lastname, signupData.email, signupData.password)
             employeeService.save(responseData)
             val user = employeeService.getUser(responseData.email)
-            return SignupOutput(user!!.id, responseData.firstName, responseData.lastName,responseData.email)
+            if(users.size==0)
+                employeeService.addRole(user!!, "ROLE_ADMINISTRATOR")
+            else
+                employeeService.addRole(user!!, "ROLE_USER")
+            val roles = employeeService.getRoles(user)
+
+            return SignupOutput(user!!.id, responseData.firstName, responseData.lastName,responseData.email,
+                roles.toTypedArray()
+            )
         }
         throw ResponseStatusException(HttpStatus.BAD_REQUEST, "The password is in the hacker's database!")
     }
