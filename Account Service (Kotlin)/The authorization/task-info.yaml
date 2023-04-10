@@ -1392,7 +1392,21 @@ files:
 feedback_link: https://hyperskill.org/learn/step/27100#comment
 status: Failed
 feedback:
-  message: "Wrong answer in test #36\n\nWrong object in response, expected array of\
-    \ JSON but was \nclass java.lang.String"
-  time: "Mon, 10 Apr 2023 00:26:07 UTC"
+  message: |-
+    Wrong answer in test #47
+
+    The JSON object at key email should equal to &quot;ivanivanov@acme.com&quot;, found &quot;IvanIvanov@acme.com&quot;
+
+    Full JSON:
+    {
+      &quot;id&quot;: 3,
+      &quot;name&quot;: &quot;Ivan&quot;,
+      &quot;lastname&quot;: &quot;Ivanov&quot;,
+      &quot;email&quot;: &quot;IvanIvanov@acme.com&quot;,
+      &quot;roles&quot;: [
+        &quot;ROLE_USER&quot;,
+        &quot;ACCOUNTANT&quot;
+      ]
+    }
+  time: "Mon, 10 Apr 2023 00:59:55 UTC"
 record: -1

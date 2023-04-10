@@ -96,8 +96,8 @@ class EmployeeService(val db: JdbcTemplate, val transactionTemplate: Transaction
         return rolesList
     }
     fun deleteUser(user:User){
-        db.update(String.format("delete * from roles where user_id=%d", user.id))
-        db.update(String.format("delete * from users where id=%d", user.id))
+        db.update(String.format("delete from roles where user_id=%d", user.id))
+        db.update(String.format("delete from users where id=%d", user.id))
     }
 
 
